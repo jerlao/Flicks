@@ -160,14 +160,14 @@ class NowPlayingTableViewController: UITableViewController, NSURLSessionDelegate
                 
                 // imageResponse will be nil if the image is cached
                 if imageResponse != nil {
-                    print("Image was NOT cached, fade in image")
+                    // print("Image was NOT cached, fade in image")
                     cell.largeView.alpha = 0.0
                     cell.largeView.image = image
                     UIView.animateWithDuration(0.3, animations: { () -> Void in
                         cell.largeView.alpha = 1.0
                     })
                 } else {
-                    print("Image was cached so just update the image")
+                    // print("Image was cached so just update the image")
                     cell.largeView.image = image
                 }
             },
