@@ -23,9 +23,9 @@ Additional Requirements: Completed
 
 Optional: Some
 
-* Add a tab bar for Now Playing or Top Rated movies. (high)
+* [ ] Add a tab bar for Now Playing or Top Rated movies. (high)
 
-* Implement a UISegmentedControl to switch between a list view and a grid view. (high)
+* [ ] Implement a UISegmentedControl to switch between a list view and a grid view. (high)
 
 * [x] Add a search bar. (med)
 
@@ -34,6 +34,10 @@ Optional: Some
 * [x] Customize the highlight and selection effect of the cell. (low)
 
 * [x] Customize the navigation bar. (low)
+
+Licecap GIF Demo
+
+![Video Walkthrough](FlicksFinal.gif)
 
 Note
 
