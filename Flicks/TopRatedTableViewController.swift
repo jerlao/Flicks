@@ -17,6 +17,7 @@ class TopRatedTableViewController: UITableViewController, NSURLSessionDelegate, 
     private var allMovies = [Movie]()
     private var filteredMovies = [Movie]()
     private var searchActive = false
+    private let refreshController = UIRefreshControl()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -32,17 +33,19 @@ class TopRatedTableViewController: UITableViewController, NSURLSessionDelegate, 
         
         self.tableView.rowHeight = self.view.frame.height/3
         
-        let refreshControl = UIRefreshControl()
-        refreshControl.addTarget(self, action: "refreshTable:", forControlEvents: UIControlEvents.ValueChanged)
-        self.tableView.insertSubview(refreshControl, atIndex: 0)
-        self.refreshTable(refreshControl)
+        refreshController.addTarget(self, action: "refreshTable:", forControlEvents: UIControlEvents.ValueChanged)
+        self.tableView.insertSubview(refreshController, atIndex: 0)
     }
     
     override func viewWillAppear(animated: Bool) {
         if(!InternetConnection.isConnectedToNetwork()) {
             performSegueWithIdentifier("TopToError", sender: nil)
         } else {
-            self.tableView.reloadData()
+            if self.allMovies.count == 0 {
+                self.refreshTable(self.refreshController)
+            } else {
+                self.tableView.reloadData()
+            }
         }
     }
     
@@ -244,9 +247,9 @@ class TopRatedTableViewController: UITableViewController, NSURLSessionDelegate, 
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
         // Get the new view controller using segue.destinationViewController.
         // Pass the selected object to the new view controller.
-        if InternetConnection.isConnectedToNetwork() {
-            let destination = segue.destinationViewController as! DetailViewController
+        if segue.identifier != "TopToError" {
             let indexPath = self.tableView.indexPathForSelectedRow
+            let destination = segue.destinationViewController as! DetailViewController
             if searchActive {
                 destination.movieObject = self.filteredMovies[indexPath!.section]
             } else {
@@ -254,5 +257,4 @@ class TopRatedTableViewController: UITableViewController, NSURLSessionDelegate, 
             }
         }
     }
-    
 }

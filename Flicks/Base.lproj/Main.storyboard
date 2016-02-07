@@ -128,6 +128,7 @@
                                 </connections>
                             </button>
                         </subviews>
+                        <color key="backgroundColor" white="0.95105064660000005" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstItem="uQm-pf-VUt" firstAttribute="top" secondItem="cMP-Ba-lM5" secondAttribute="bottom" constant="129" id="Pmz-Ys-dm7"/>
                             <constraint firstItem="xMy-Qg-oRq" firstAttribute="centerX" secondItem="eOd-2j-4EQ" secondAttribute="centerX" id="Ret-he-9IQ"/>

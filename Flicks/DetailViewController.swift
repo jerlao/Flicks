@@ -20,17 +20,6 @@ class DetailViewController: UIViewController, NSURLSessionDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        if let navigationBar = navigationController?.navigationBar {
-            navigationItem.title = (self.movieObject?.title)!
-            navigationBar.tintColor = UIColor.whiteColor()
-            navigationBar.barTintColor = UIColor(red: 109/255, green: 205/255, blue: 237/255, alpha: 0.8)
-            
-            navigationBar.titleTextAttributes = [
-                NSFontAttributeName : UIFont.boldSystemFontOfSize(22),
-                NSForegroundColorAttributeName : UIColor.whiteColor()
-            ]
-        }
-        
         // Do any additional setup after loading the view.
         
         self.overviewScrollView.frame = CGRectMake(0, 64, self.view.frame.size.width, self.view.frame.size.height)
@@ -72,7 +61,7 @@ class DetailViewController: UIViewController, NSURLSessionDelegate {
         let contentHeight = labelHeight * 2 + overviewLabel.frame.height + topOffset
         
         overviewScrollView.contentSize = CGSizeMake(contentWidth, contentHeight + 150)
-
+        
         self.overviewScrollView.addSubview(subview)
     }
     
@@ -80,15 +69,37 @@ class DetailViewController: UIViewController, NSURLSessionDelegate {
         if(!InternetConnection.isConnectedToNetwork()) {
             performSegueWithIdentifier("DetailToError", sender: nil)
         } else {
-//            self.downloadThumbnailImage()
+            if let navigationBar = navigationController?.navigationBar {
+                if let navTitle = self.movieObject?.title {
+                    navigationItem.title = navTitle
+                    navigationBar.tintColor = UIColor.whiteColor()
+                    navigationBar.barTintColor = UIColor(red: 109/255, green: 205/255, blue: 237/255, alpha: 0.8)
+                    
+                    navigationBar.titleTextAttributes = [
+                        NSFontAttributeName : UIFont.boldSystemFontOfSize(22),
+                        NSForegroundColorAttributeName : UIColor.whiteColor()
+                    ]
+                } else {
+                    navigationItem.title = "Movie"
+                    navigationBar.tintColor = UIColor.whiteColor()
+                    navigationBar.barTintColor = UIColor(red: 109/255, green: 205/255, blue: 237/255, alpha: 0.8)
+                    
+                    navigationBar.titleTextAttributes = [
+                        NSFontAttributeName : UIFont.boldSystemFontOfSize(22),
+                        NSForegroundColorAttributeName : UIColor.whiteColor()
+                    ]
+                }
+            }
             if let largeImage = self.movieObject?.posterImageUrl {
                 self.swapLowWithHighRes(largeImage, lowRes: (self.movieObject?.thumbnailUrl)!)
             } else {
                 self.bgImageView.image = UIImage(named: "image")
+                self.bgImageView.clipsToBounds = true
+                self.bgImageView.contentMode = UIViewContentMode.ScaleAspectFill
             }
         }
     }
-
+    
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
@@ -178,14 +189,17 @@ class DetailViewController: UIViewController, NSURLSessionDelegate {
     }
     
     
-    /*
+    
     // MARK: - Navigation
     
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-    // Get the new view controller using segue.destinationViewController.
-    // Pass the selected object to the new view controller.
+        // Get the new view controller using segue.destinationViewController.
+        // Pass the selected object to the new view controller.
+        if self.movieObject != nil {
+            let destination = segue.destinationViewController as! NetworkErrorViewController
+            destination.movieObject = self.movieObject
+        }
     }
-    */
     
 }

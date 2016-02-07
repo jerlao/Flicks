@@ -10,6 +10,8 @@ import UIKit
 
 class NetworkErrorViewController: UIViewController {
     
+    var movieObject:Movie?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         

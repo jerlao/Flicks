@@ -17,6 +17,7 @@ class NowPlayingTableViewController: UITableViewController, NSURLSessionDelegate
     private var filteredMovies = [Movie]()
     private var searchActive = false
     private let url = NSURL(string: "https://api.themoviedb.org/3/movie/now_playing?api_key=a07e22bc18f5cb106bfe4cc1f83ad8ed")
+    private let refreshController = UIRefreshControl()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -32,17 +33,20 @@ class NowPlayingTableViewController: UITableViewController, NSURLSessionDelegate
         
         self.tableView.rowHeight = self.view.frame.height/3
         
-        let refreshControl = UIRefreshControl()
-        refreshControl.addTarget(self, action: "refreshTable:", forControlEvents: UIControlEvents.ValueChanged)
-        self.tableView.insertSubview(refreshControl, atIndex: 0)
-        self.refreshTable(refreshControl)
+        refreshController.addTarget(self, action: "refreshTable:", forControlEvents: UIControlEvents.ValueChanged)
+        self.tableView.insertSubview(refreshController, atIndex: 0)
+        
     }
     
     override func viewWillAppear(animated: Bool) {
         if(!InternetConnection.isConnectedToNetwork()) {
             performSegueWithIdentifier("NowToError", sender: nil)
         } else {
-            self.tableView.reloadData()
+            if self.allMovies.count == 0 {
+                self.refreshTable(self.refreshController)
+            } else {
+                self.tableView.reloadData()
+            }
         }
     }
     
@@ -190,11 +194,11 @@ class NowPlayingTableViewController: UITableViewController, NSURLSessionDelegate
         
         // Use the section number to get the right URL
         if searchActive {
-        if let image = self.filteredMovies[section].thumbnailUrl {
-            profileView.setImageWithURL(image, placeholderImage: UIImage(named: "image"))
-        } else {
-            profileView.image = UIImage(named: "image")
-        }
+            if let image = self.filteredMovies[section].thumbnailUrl {
+                profileView.setImageWithURL(image, placeholderImage: UIImage(named: "image"))
+            } else {
+                profileView.image = UIImage(named: "image")
+            }
         } else {
             if let image = self.allMovies[section].thumbnailUrl {
                 profileView.setImageWithURL(image, placeholderImage: UIImage(named: "image"))
@@ -211,7 +215,7 @@ class NowPlayingTableViewController: UITableViewController, NSURLSessionDelegate
         if searchActive {
             label.text = self.filteredMovies[section].title
         } else {
-           label.text = self.allMovies[section].title
+            label.text = self.allMovies[section].title
         }
         headerView.addSubview(label)
         
@@ -247,14 +251,17 @@ class NowPlayingTableViewController: UITableViewController, NSURLSessionDelegate
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
         // Get the new view controller using segue.destinationViewController.
         // Pass the selected object to the new view controller.
-        if InternetConnection.isConnectedToNetwork() {
+        let indexPath = self.tableView.indexPathForSelectedRow
+        
+        if segue.identifier != "NowToError" {
+            
             let destination = segue.destinationViewController as! DetailViewController
-            let indexPath = self.tableView.indexPathForSelectedRow
             if searchActive {
                 destination.movieObject = self.filteredMovies[indexPath!.section]
             } else {
                 destination.movieObject = self.allMovies[indexPath!.section]
             }
+            
         }
     }
     
